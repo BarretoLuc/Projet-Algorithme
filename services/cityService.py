@@ -10,29 +10,29 @@ class CityService:
         self.cities = []
         pass
     
-    def get_coordinates(self, city: str) -> List[float]:
+    def getCoordinates(self, city: str) -> List[float]:
         nominatim = Nominatim()
         area = nominatim.query(city)
-        return area.toJSON()[0]['lat'], area.toJSON()[0]['lon']
+        return area.toJSON()[0]["lat"], area.toJSON()[0]["lon"]
     
     # Fonction exécutée par chaque thread
-    def fonction_thread(self):
+    def fonctionThread(self):
         while True:
             # Récupérer un élément de la queue
             city = self.queueCity.get()
 
-            x, y = self.get_coordinates(city[0])
+            x, y = self.getCoordinates(city[0])
             self.cities.append(CityModel(city[0], float(x), float(y)))
 
             print("Ville", city[0], "traitée.")
             # Indiquer à la queue que le traitement de l'élément est terminé
             self.queueCity.task_done()
         
-    def load_cities(self, path: str):
-        with open(path, encoding='utf8') as file:
+    def loadCities(self, path: str):
+        with open(path, encoding="utf8") as file:
             # Création et démarrage des threads
             for i in range(10):
-                thread = threading.Thread(target=self.fonction_thread)
+                thread = threading.Thread(target=self.fonctionThread)
                 thread.start()
                 print("Thread", i, "démarré.")
             print("Tous les threads ont été démarrés.\n")

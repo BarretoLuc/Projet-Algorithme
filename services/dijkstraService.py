@@ -1,19 +1,10 @@
 from math import inf
 
-# wmat = [[0, 2, 0, 0, 0, 1, 0, 0],
-#         [2, 0, 2, 2, 4, 0, 0, 0],
-#         [0, 2, 0, 0, 3, 0, 0, 1],
-#         [0, 2, 0, 0, 4, 3, 0, 0],
-#         [0, 4, 3, 4, 0, 0, 7, 0],
-#         [1, 0, 0, 3, 0, 0, 5, 0],
-#         [0, 0, 0, 0, 7, 5, 0, 6],
-#         [0, 0, 1, 0, 0, 0, 6, 0]]
-
 class DijkstraService:
     def __init__(self) -> None:
         pass
     
-    def find_all(self, wmat, start, end=-1):
+    def findAll(self, wmat, start, end=-1):
         """
         Returns a tuple with a distances' list and paths' list of
         all remaining vertices with the same indexing.
@@ -70,11 +61,11 @@ class DijkstraService:
         return (dist[end], path[end]) if end >= 0 else (dist, path)
 
 
-    def find_shortest_path(self, wmat, start, end=-1):
-        return self.find_all(self, wmat, start, end)[1]
+    def findShortestPath(self, wmat, start, end=-1):
+        return self.findAll(self, wmat, start, end)[1]
 
 
-    def find_shortest_distance(self, wmat, start, end=-1):
+    def findShortestDistance(self, wmat, start, end=-1):
         """
         Returns distances' list of all remaining vertices.
 
@@ -87,6 +78,4 @@ class DijkstraService:
         Exceptions:
         Index out of range, Be careful with start and end vertices.
         """
-        return self.find_all(self, wmat, start, end)[0]
-
-# print(find_all(wmat, 1,6))
+        return self.findAll(self, wmat, start, end)[0]
