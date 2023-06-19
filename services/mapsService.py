@@ -1,16 +1,16 @@
 import folium
 
-class Maps:
+class MapsService:
     def __init__(self) -> None:
         pass
 
-    def completeGraphe(self, allCity):
+    def completeGraphe(self, allCity, map):
         trail_coordinates = []
         for i in range(len(allCity)):
             for j in range(i+1, len(allCity)):
                 folium.PolyLine([[allCity[i].X, allCity[i].Y], [allCity[j].X, allCity[j].Y]], tooltip="Coast").add_to(map)
 
-    def matriceGraph(self, allCity):
+    def matriceGraph(self, allCity, map):
         matrice = [
             [0, 0, 392.02531869433216, 0, 0, 0, 398.5542834873119, 0, 498.73884900510325, 0],
             [0, 0, 276.86392948925203, 0, 159.9887240628665, 696.2535409520142, 0, 125.82384873442851, 506.4981022260729, 0],
@@ -32,7 +32,7 @@ class Maps:
                     
                     # Traçage du segment entre les villes
                     folium.PolyLine(
-                        locations=[(city1['latitude'], city1['longitude']), (city2['latitude'], city2['longitude'])],
+                        locations=[(city1.X, city1.Y), (city2.X, city2.Y)],
                         color='blue',
                         weight=2
                     ).add_to(map)

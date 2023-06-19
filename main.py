@@ -1,13 +1,13 @@
 from services.cityService import CityService
-from services.mapsService import Maps
+from services.mapsService import MapsService
 import pandas
 import networkx as nx
 import folium
 
 if __name__ == "__main__":
     city_service = CityService()
-    map_service = Maps()
-    allCity = city_service.load_cities(".\\data\\villes1000.txt")
+    map_service = MapsService()
+    allCity = city_service.load_cities(".\\data\\villes10.txt")
     
     for city in allCity:
         print(city.Name, city.X, city.Y)
@@ -24,5 +24,6 @@ if __name__ == "__main__":
     for index, row in dataFrame.iterrows():
         folium.Marker([row['Latitude'], row['Longitude']], popup=row['Ville'], ).add_to(map)
 
-    
+    map_service.matriceGraph(allCity, map)
+
     map.save('france_cities_map10.html')  # Sauvegarde la carte dans un fichier HTML
