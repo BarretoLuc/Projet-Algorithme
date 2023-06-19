@@ -8,7 +8,7 @@ if __name__ == "__main__":
     
     # Récupération des coordonnées des villes :
     cityService = CityService()
-    listCoordCity = cityService.load_cities(".\\data\\villes10.txt")
+    listCoordCity = cityService.loadCities(".\\data\\villes10.txt")
     
     print("Liste des villes :")
     for city in listCoordCity:
@@ -35,18 +35,38 @@ if __name__ == "__main__":
     # Création de la carte des villes avec les distances entre elles :    
     mapService = MapsService(listCoordCity)
     mapService.matriceGraph(listCoordCity, matriceDistanceCity)
-    mapService.saveMap('.\\maps\\france_cities_map10.html')
+    mapService.saveMap(".\\maps\\france_cities_map10.html")
     print("\nLa map a été générée avec succès !\n")
     
+    # Sélection des villes à désservir :
+    print("Sélection des villes à désservir :\n")
+    selectedCoordCity=[]
+    selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
+    #selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
+    for i in range(len(selectedCity)):
+        selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
+    for city in selectedCoordCity:
+        print(city.Name, city.X, city.Y)
+    
+    # Calcul du plus court chemin des villes sélectionnées pour créer le graphe connexe :
     print("\nDijkstra :\n")
-    dijkstra_service = DijkstraService()
+    dijkstraService = DijkstraService()
     
-    dijkstra = dijkstra_service.find_all(matriceDistanceCity, 0, 6)
-    # 0 / 4 / 6
+    n = len(selectedCity)
+    matriceDijkstraSelectedCity = [[0] * n for _ in range(n)] # Initialisez une matrice de distances remplie de zéros.
     
-    # 20 / 0 4
-    # 40 / 0 3 5 6
-    print(dijkstra)
+    for i in range(n):
+        for j in range(i+1, n):
+            matriceDijkstraSelectedCity[i][j] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
+            matriceDijkstraSelectedCity[j][i] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
+
+    print(matriceDijkstraSelectedCity)
+    
+    # Création de la carte des villes séléctionnées avec les distances entre elles :
+    mapService = MapsService(selectedCoordCity)
+    mapService.completeGraphe(selectedCoordCity, matriceDijkstraSelectedCity)
+    mapService.saveMap(".\\maps\\france_cities_map10_selected.html")
+    print("\nLa map a été générée avec succès !\n")
     
 sys.exit(0)
