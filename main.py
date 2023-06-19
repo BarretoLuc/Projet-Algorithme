@@ -5,7 +5,7 @@ import pandas, folium, sys, random
 
 if __name__ == "__main__":
     city_service = CityService()
-    map_service = Maps()
+    #map_service = Maps()
     allCity = city_service.load_cities(".\\data\\villes1000.txt")
     
     print("Liste des villes :")
