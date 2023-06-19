@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     print(matriceDijkstraSelectedCity)
     
-    # Création de la carte des villes séléctionnées avec les distances entre elles :
+    # Création de la carte des villes séléctionnées (graphe conexe) avec les distances entre elles :
     mapService = MapsService(selectedCoordCity)
     mapService.completeGraphe(selectedCoordCity, matriceDijkstraSelectedCity)
     mapService.saveMap(".\\maps\\france_cities_map10_selected.html")
