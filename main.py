@@ -2,6 +2,7 @@ from services.cityService import CityService
 from services.dijkstraService import DijkstraService
 from services.mapsService import MapsService
 from geopy.distance import geodesic
+from services.fourmisService import FourmisService
 import sys, random
 
 if __name__ == "__main__":
@@ -9,10 +10,11 @@ if __name__ == "__main__":
     # Récupération des coordonnées des villes :
     cityService = CityService()
     listCoordCity = cityService.loadCities(".\\data\\villes10.txt")
+
     
-    print("Liste des villes :")
-    for city in listCoordCity:
-        print(city.Name, city.X, city.Y)
+    # print("Liste des villes :")
+    # for city in listCoordCity:
+    #     print(city.Name, city.X, city.Y)
     
     # Calcul de la matrice des distances entre les villes :
     n = len(listCoordCity)
@@ -23,26 +25,29 @@ if __name__ == "__main__":
             coord1 = (listCoordCity[i].X, listCoordCity[i].Y)
             coord2 = (listCoordCity[j].X, listCoordCity[j].Y)
             distance = geodesic(coord1, coord2).kilometers
-            if(distance > 200 and random.randint(0, 1) == 0): # On supprime certaines distances pour avoir un graphe non connexe.
+            if(distance > 200 and random.randint(0, 1) == 0): # On supprime certaines distances pour avoir un graphe non connexe. "C'est débile ça veut rien dire"
+                #Prendre 3 - 4 villes et les relier entre elles
+                # Dose Luc stp
                 distance = 0
             matriceDistanceCity[i][j] = distance
             matriceDistanceCity[j][i] = distance
 
-    print("Matrice de distances :\n")
-    for row in matriceDistanceCity:
-        print(row)
+    # print("Matrice de distances :\n")
+    # for row in matriceDistanceCity:
+    #     print(row)
         
     # Création de la carte des villes avec les distances entre elles :    
     mapService = MapsService(listCoordCity)
     mapService.matriceGraph(listCoordCity, matriceDistanceCity)
     mapService.saveMap(".\\maps\\france_cities_map10.html")
-    print("\nLa map a été générée avec succès !\n")
+    # print("\nLa map a été générée avec succès !\n")
     
     # Sélection des villes à désservir :
-    print("Sélection des villes à désservir :\n")
+    # print("Sélection des villes à désservir :\n")
     selectedCoordCity=[]
     selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
-    #selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
+    # selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
+    # selectedCity = random.sample(listCoordCity,10)
     for i in range(len(selectedCity)):
         selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
@@ -58,8 +63,8 @@ if __name__ == "__main__":
     
     for i in range(n):
         for j in range(i+1, n):
-            matriceDijkstraSelectedCity[i][j] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
             matriceDijkstraSelectedCity[j][i] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
+            matriceDijkstraSelectedCity[i][j] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
 
     print(matriceDijkstraSelectedCity)
     
@@ -68,5 +73,8 @@ if __name__ == "__main__":
     mapService.completeGraphe(selectedCoordCity, matriceDijkstraSelectedCity)
     mapService.saveMap(".\\maps\\france_cities_map10_selected.html")
     print("\nLa map a été générée avec succès !\n")
-    
-sys.exit(0)
+
+    print("\nAlgo fourmis :\n")
+    print (matriceDijkstraSelectedCity)
+    fourmisService = FourmisService(allCity=selectedCoordCity, matrice=matriceDijkstraSelectedCity)
+    fourmisService.main()

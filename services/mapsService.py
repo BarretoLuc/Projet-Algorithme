@@ -37,3 +37,6 @@ class MapsService:
         for i in range(len(listCoordCity)):
             for j in range(i+1, len(listCoordCity)):
                 folium.PolyLine([[listCoordCity[i].X, listCoordCity[i].Y], [listCoordCity[j].X, listCoordCity[j].Y]], tooltip="Coast", popup=matriceDistanceCity[i][j][0]).add_to(self.map)
+
+    def chemin(self, listCoordCity):
+        folium.PolyLine(listCoordCity, tooltip="Coast").add_to(self.map)
