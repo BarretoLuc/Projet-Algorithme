@@ -1,12 +1,13 @@
 from services.cityService import CityService
 from services.dijkstraService import DijkstraService
+from services.mapsService import MapsService
 from geopy.distance import geodesic
 import pandas, folium, sys, random
 
 if __name__ == "__main__":
     city_service = CityService()
-    #map_service = Maps()
-    allCity = city_service.load_cities(".\\data\\villes1000.txt")
+    map_service = MapsService()
+    allCity = city_service.load_cities(".\\data\\villes10.txt")
     
     print("Liste des villes :")
     for city in allCity:
