@@ -25,4 +25,4 @@ if __name__ == "__main__":
         folium.Marker([row['Latitude'], row['Longitude']], popup=row['Ville'], ).add_to(map)
 
     
-    map.save('france_cities_map1000.html')  # Sauvegarde la carte dans un fichier HTML
+    map.save('france_cities_map10.html')  # Sauvegarde la carte dans un fichier HTML

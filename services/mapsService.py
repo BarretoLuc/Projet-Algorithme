@@ -23,3 +23,16 @@ class Maps:
             [498.73884900510325, 506.4981022260729, 0, 0, 0, 0, 0, 0, 0, 699.6872677311559],
             [0, 0, 0, 791.3246018969211, 0, 508.6940884718729, 408.3397734561678, 0, 699.6872677311559, 0]
         ]   
+        for i in range(len(matrice)):
+            for j in range(len(matrice[i])):
+                if matrice[i][j] != 0:
+                    # Récupération des coordonnées des villes
+                    city1 = allCity[i]
+                    city2 = allCity[j]
+                    
+                    # Traçage du segment entre les villes
+                    folium.PolyLine(
+                        locations=[(city1['latitude'], city1['longitude']), (city2['latitude'], city2['longitude'])],
+                        color='blue',
+                        weight=2
+                    ).add_to(map)
