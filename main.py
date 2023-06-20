@@ -9,7 +9,7 @@ if __name__ == "__main__":
     
     # Récupération des coordonnées des villes :
     cityService = CityService()
-    listCoordCity = cityService.loadCities(".\\data\\villes10.txt")
+    listCoordCity = cityService.loadCities(".\\data\\villes100.txt")
 
     
     # print("Liste des villes :")
@@ -25,12 +25,11 @@ if __name__ == "__main__":
             coord1 = (listCoordCity[i].X, listCoordCity[i].Y)
             coord2 = (listCoordCity[j].X, listCoordCity[j].Y)
             distance = geodesic(coord1, coord2).kilometers
-            if(distance > 200 and random.randint(0, 1) == 0): # On supprime certaines distances pour avoir un graphe non connexe. "C'est débile ça veut rien dire"
-                #Prendre 3 - 4 villes et les relier entre elles
-                # Dose Luc stp
-                distance = 0
-            matriceDistanceCity[i][j] = distance
-            matriceDistanceCity[j][i] = distance
+            if(distance < 200 and random.randint(0, 1) == 0): # On supprime certaines distances pour avoir un graphe non connexe
+                # Prendre 3 - 4 villes et les relier entre elles
+                matriceDistanceCity[i][j] = distance
+                matriceDistanceCity[j][i] = distance
+            distance = 0
 
     # print("Matrice de distances :\n")
     # for row in matriceDistanceCity:
@@ -45,9 +44,9 @@ if __name__ == "__main__":
     # Sélection des villes à désservir :
     # print("Sélection des villes à désservir :\n")
     selectedCoordCity=[]
-    selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
+    # selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
     # selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
-    # selectedCity = random.sample(listCoordCity,10)
+    selectedCity = random.sample(listCoordCity, 20)
     for i in range(len(selectedCity)):
         selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
