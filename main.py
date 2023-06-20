@@ -2,14 +2,16 @@ from services.cityService import CityService
 from services.dijkstraService import DijkstraService
 from services.mapsService import MapsService
 from services.simulatedAnnealingService import SimulatedAnnealing
-from geopy.distance import geodesic
-import matplotlib.pyplot as plt
 from services.fourmisService import FourmisService
-import sys, random
-import pandas as pd
+from services.twoOptService import TwoOPT
+from geopy.distance import geodesic
+import sys, random, pandas
 
 if __name__ == "__main__":
     
+    ###################################################################################################
+    ### Sélection des villes :                                                                      ###
+    ###################################################################################################
     # Récupération des coordonnées des villes :
     cityService = CityService()
     listCoordCity = cityService.loadCities(".\\data\\villes100.txt")
@@ -46,7 +48,6 @@ if __name__ == "__main__":
     ###################################################################################################
     ### Sélection des villes à désservir :                                                          ###
     ###################################################################################################
-    # print("Sélection des villes à désservir :\n")
     selectedCoordCity=[]
     selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
     #selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
@@ -54,12 +55,14 @@ if __name__ == "__main__":
     for i in range(len(selectedCity)):
         selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
-    # for city in selectedCoordCity:
-    #     print(city.Name, city.X, city.Y)
+    print("Sélection des villes à désservir :\n")
+    for city in selectedCoordCity:
+        print(city.Name, city.X, city.Y)
     
     ###################################################################################################
-    ### Calcul du plus court chemin des villes sélectionnées pour créer le graphe connexe :         ###
+    ### Calcul et affichage du graphe connexe :                                                     ###
     ###################################################################################################
+    # Calcul du plus court chemin des villes sélectionnées :
     matriceDijkstraSelectedCity = [[0] * len(selectedCity) for _ in range(len(selectedCity))] # Initialisez une matrice de distances remplie de zéros.
     dijkstraService = DijkstraService()
     
@@ -86,44 +89,60 @@ if __name__ == "__main__":
         listSelectedCoordCity.append([selectedCoordCity[i].X, selectedCoordCity[i].Y])
     listSelectedCoordCity.append([selectedCoordCity[0].X, selectedCoordCity[0].Y])
     mapService.chemin(listSelectedCoordCity)
-    mapService.saveMap(".\\maps\\france_cities_map_selected_chemin_non_opti.html")
+    mapService.saveMap(".\\maps\\france_cities_chemin_non_opti.html")
     
     ###################################################################################################
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (RECUIT SIMULE) : ###
     ###################################################################################################
-    # x = []
-    # y = []
-    # letters = []
+    x = []
+    y = []
+    letters = []
     
-    # for i in range(len(selectedCoordCity)):
-    #     x.append(selectedCoordCity[i].X)
-    #     y.append(selectedCoordCity[i].Y)
-    #     letters.append(selectedCoordCity[i].Name)
+    for i in range(len(selectedCoordCity)):
+        x.append(selectedCoordCity[i].X)
+        y.append(selectedCoordCity[i].Y)
+        letters.append(selectedCoordCity[i].Name)
     
-    # df = pd.DataFrame(list(zip(x, y, letters)), columns=['x', 'y', 'point']) # Make last city the origin city
-    # df = df._append(df.iloc[0]).reset_index()
+    df = pandas.DataFrame(list(zip(x, y, letters)), columns=['x', 'y', 'point']) # Make last city the origin city
+    df = df._append(df.iloc[0]).reset_index()
     
-    # iterations = 1000
-    # temp = 1000
-    # gamma = 0.99
-    # sa = SimulatedAnnealing(iterations, temp, df, gamma)
-    # scores, best_scores, temps, best_df = sa.run()
+    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99)
+    scores, best_scores, temps, best_df = sa.run()
     
-    # print("Itinéraire le plus optimisé :")
-    # print(best_df)
+    print("Itinéraire le plus optimisé :")
+    print(best_df)
     
-    # mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
-    # listSelectedCoordCityOpti = []
-    # for i in range(len(best_df)):
-    #     listSelectedCoordCityOpti.append([best_df.iloc[i]['x'], best_df.iloc[i]['y']])
-    # mapService.chemin(listSelectedCoordCityOpti)
-    # mapService.saveMap(".\\maps\\france_cities_map_selected_chemin_opti.html")
+    mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
+    listSelectedCoordCityOpti = []
+    for i in range(len(best_df)):
+        listSelectedCoordCityOpti.append([best_df.iloc[i]['x'], best_df.iloc[i]['y']])
+    mapService.chemin(listSelectedCoordCityOpti)
+    mapService.saveMap(".\\maps\\france_cities_chemin_recuit.html")
     
     ###################################################################################################
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (FOURMIS) :       ###
     ###################################################################################################
-    
     fourmisService = FourmisService(allCity=selectedCoordCity, matrice=matriceDijkstraSelectedCity)
     fourmisService.main()
+    
+    ###################################################################################################
+    ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (2-OPT) :         ###
+    ###################################################################################################
+    twoOptService = TwoOPT(selectedCoordCity)
+    solution, distance = twoOptService.run()
+    
+    
+    print("\nItinéraire le plus optimisé :")
+    for i in range(len(solution)):
+        print(selectedCoordCity[solution[i]].Name, selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y)
+    print(selectedCoordCity[solution[0]].Name, selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y)
+    
+    mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
+    listSelectedCoordCityOpti = []
+    for i in range(len(solution)):
+        listSelectedCoordCityOpti.append([selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y])
+    listSelectedCoordCityOpti.append([selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y])
+    mapService.chemin(listSelectedCoordCityOpti)
+    mapService.saveMap(".\\maps\\france_cities_chemin_twoOpt.html")
     
 sys.exit(0)

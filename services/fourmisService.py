@@ -86,7 +86,7 @@ class FourmisService:
         return meilleur_chemin, meilleur_cout
 
     def main(self):
-        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=100)
+        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=1000)
         coo_fourmis = []
         for i in meilleur_chemin:
             coo_fourmis.append([self.allCity[i].X, self.allCity[i].Y])
