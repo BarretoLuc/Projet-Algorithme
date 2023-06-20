@@ -36,7 +36,7 @@ class FourmisService:
         choix = random.choices(non_visitees, probabilities)[0]
         return choix
 
-    def algo_fourmis(self, nombre_fourmis, alpha=1, beta=1, rho=0.5, iterations=10):
+    def algo_fourmis(self, nombre_fourmis, ville_depart, alpha=1, beta=1, rho=0.5, iterations=10):
         """Algorithme des fourmis."""
         for _ in range(iterations):
             meilleur_chemin = None
@@ -47,8 +47,8 @@ class FourmisService:
                 cout_total = 0
                 villes_visitees = set()
 
-                # Choix aléatoire de la ville de départ <- ça va pas
-                ville_actuelle = random.randint(0, len(self.matrice) - 1)
+                # ville_actuelle = random.randint(0, len(self.matrice) - 1)
+                ville_actuelle = ville_depart
                 villes_visitees.add(ville_actuelle)
                 chemin.append(ville_actuelle) 
 
@@ -86,11 +86,13 @@ class FourmisService:
         return meilleur_chemin, meilleur_cout
 
     def main(self):
-        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=100)
+        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=10000, ville_depart=0)
         coo_fourmis = []
+        y = 0
         for i in meilleur_chemin:
             coo_fourmis.append([self.allCity[i].X, self.allCity[i].Y])
-            print("Ville n°" + str(i) + " visitée : " + self.allCity[i].Name)
+            print("Ville n°" + str(y) + " visitée : " + self.allCity[i].Name)
+            y+=1
         print(coo_fourmis)
         print("Meilleur chemin trouvé :", meilleur_chemin)
         print("Meilleur coût trouvé :", meilleur_cout)
