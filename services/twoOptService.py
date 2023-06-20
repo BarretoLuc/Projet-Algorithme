@@ -17,4 +17,5 @@ class TwoOPT:
                 if new_distance < current_best_distance:
                     self.solution = new_solution
                     current_best_distance = new_distance
+        self.solution = np.concatenate((self.solution,[self.solution[0]]))
         return self.solution, distance_calculation(self.solution,self.city_list)

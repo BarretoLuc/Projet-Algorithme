@@ -134,7 +134,6 @@ if __name__ == "__main__":
     print("\nItinéraire le plus optimisé 2-OPT :")
     for i in range(len(solution)):
         print(selectedCoordCity[solution[i]].Name, selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y)
-    print(selectedCoordCity[solution[0]].Name, selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y)
     
     mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
     listSelectedCoordCityOpti2OPT = []
@@ -212,6 +211,38 @@ if __name__ == "__main__":
     print("\nDistance totale fourmis : " + str(distanceTotaleFourmis))
     
     #2-OPT :
+    # meilleurCheminTwoOPT = []
+    # for i in range(len(solution)):
+    #     meilleurCheminTwoOPT.append(solution[i])
+    
+    finalCityTwoOPT = []
+    for i in range(len(solution)-1):
+        finalCityTwoOPT.append(matriceDijkstraSelectedCity[solution[i]][solution[i+1]][1])
+    
+    for i in range(len(finalCityTwoOPT)-1):
+        finalCityTwoOPT[i].pop(-1)
+    
+    finalCityTwoOPTRefactor = []
+    for sousListeTwoOPT in finalCityTwoOPT:
+        finalCityTwoOPTRefactor.extend(sousListeTwoOPT)
+    
+    listCityTwoOPTFinal=[]
+    for i in range(len(finalCityTwoOPTRefactor)):
+        listCityTwoOPTFinal.append(listCoordCity[finalCityTwoOPTRefactor[i]])
+    
+    listCoordCityTwoOPTFinal = []
+    for i in range(len(listCityTwoOPTFinal)):
+        listCoordCityTwoOPTFinal.append([listCityTwoOPTFinal[i].X, listCityTwoOPTFinal[i].Y])
+        
+    mapService = MapsService(listCityTwoOPTFinal) # Affichage de itinéraire optimisé
+    mapService.chemin(listCoordCityTwoOPTFinal)
+    mapService.saveMap(".\\maps\\france_cities_chemin_twoOpt_final.html")
+    
+    distanceTotaleTwoOPT = 0
+    for i in range(len(finalCityTwoOPTRefactor)-1):
+        distanceTotaleTwoOPT += matriceDistanceCity[finalCityTwoOPTRefactor[i]][finalCityTwoOPTRefactor[i+1]]
+    
+    print("\nDistance totale 2-OPT : " + str(distanceTotaleTwoOPT))
     
     print("\nFin du programme !")
     
