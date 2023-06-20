@@ -48,9 +48,9 @@ if __name__ == "__main__":
     ###################################################################################################
     # print("Sélection des villes à désservir :\n")
     selectedCoordCity=[]
-    # selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
-    # selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
-    selectedCity = random.sample(listCoordCity, 20)
+    selectedCity = [0, 2, 4, 6, 8, 9] #Séléction des villes à désservir quand le totale est de 10 villes
+    #selectedCity = [0, 2, 4, 7, 9, 13, 56, 451, 632, 764, 854] #Séléction des villes à désservir quand le totale est de 1000 villes    
+    #selectedCity = random.sample(listCoordCity, 20)
     for i in range(len(selectedCity)):
         selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
