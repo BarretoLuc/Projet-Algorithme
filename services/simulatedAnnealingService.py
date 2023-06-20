@@ -7,31 +7,38 @@ import random
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
-# Generate random coordinates
-x = list(np.random.randint(0, 15, 20))
-y = list(np.random.randint(0, 15, 20))
+# # Generate random coordinates
+# x = list(np.random.randint(0, 15, 20))
+# y = list(np.random.randint(0, 15, 20))
 
-# Label each city from the alphabet
-letters_org = [chr(i) for i in range(ord('a'), ord('z') + 1)]
-letters = letters_org[:len(y)]
+# # Label each city from the alphabet
+# letters_org = [chr(i) for i in range(ord('a'), ord('z') + 1)]
+# letters = letters_org[:len(y)]
 
-# Make last city the origin city
-df = pd.DataFrame(list(zip(x, y, letters)), columns=['x', 'y', 'point'])
-df = df._append(df.iloc[0]).reset_index()
 
-# Plot the city map
-plt.scatter(df['x'], df['y'])
-plt.plot(df['x'], df['y'])
-plt.title("Initial solution") 
-plt.show()
 
-fig = px.line(df, x='x', y='y', text='point', title='Initial solution')
-fig.update_layout(template="simple_white", width=800, title_x=0.5, font=dict(size=20))
-fig.update_traces(textposition='top center')
+# # Make last city the origin city
+# df = pd.DataFrame(list(zip(x, y, letters)), columns=['x', 'y', 'point'])
+# df = df._append(df.iloc[0]).reset_index()
+
+# # Plot the city map
+# plt.scatter(df['x'], df['y'])
+# plt.plot(df['x'], df['y'])
+
+# # Afficher les lettres des points sur le graphe plt
+# for i, txt in enumerate(df['point']):
+#     plt.annotate(txt, (df['x'][i], df['y'][i]))
+
+# plt.title("Initial solution") 
+# plt.show()
+
+# fig = px.line(df, x='x', y='y', text='point', title='Initial solution')
+# fig.update_layout(template="simple_white", width=800, title_x=0.5, font=dict(size=20))
+# fig.update_traces(textposition='top center')
 # fig.show()
 
 
-class SA:
+class SimulatedAnnealing:
     def __init__(self, iterations, temp, df, gamma):
         self.iterations = iterations
         self.temp = temp
@@ -120,11 +127,11 @@ class SA:
         return scores, best_scores, temps, best_df
 
 
-iterations = 1000
-temp = 1000
-gamma = 0.99
-sa = SA(iterations, temp, df, gamma)
-scores, best_scores, temps, best_df = sa.run()
+# iterations = 10000
+# temp = 1000
+# gamma = 0.99
+# sa = SimulatedAnnealing(iterations, temp, df, gamma, )
+# scores, best_scores, temps, best_df = sa.run()
 
 # Plot the results
 # fig = go.Figure()
@@ -145,8 +152,13 @@ scores, best_scores, temps, best_df = sa.run()
 # fig.update_traces(textposition='top center')
 # fig.show()
 
-# Plot the city map
-plt.scatter(best_df['x'], best_df['y'])
-plt.plot(best_df['x'], best_df['y'])
-plt.title("Final solution") 
-plt.show()
+# # Plot the city map
+# plt.scatter(best_df['x'], best_df['y'])
+# plt.plot(best_df['x'], best_df['y'])
+
+# # Afficher les lettres des points sur le graphe plt
+# for i, txt in enumerate(best_df['point']):
+#     plt.annotate(txt, (best_df['x'][i], best_df['y'][i]))
+
+# plt.title("Final solution") 
+# plt.show()

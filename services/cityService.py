@@ -35,7 +35,7 @@ class CityService:
                 thread = threading.Thread(target=self.fonctionThread)
                 thread.start()
                 print("Thread", i, "démarré.")
-            print("Tous les threads ont été démarrés.\n")
+            print("\nTous les threads ont été démarrés.\n")
             
             # Ajout des données dans la queue
             for line in file:
