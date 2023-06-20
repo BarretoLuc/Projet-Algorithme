@@ -90,6 +90,7 @@ class FourmisService:
         coo_fourmis = []
         for i in meilleur_chemin:
             coo_fourmis.append([self.allCity[i].X, self.allCity[i].Y])
+            print("Ville n°" + str(i) + " visitée : " + self.allCity[i].Name)
         print(coo_fourmis)
         print("Meilleur chemin trouvé :", meilleur_chemin)
         print("Meilleur coût trouvé :", meilleur_cout)
