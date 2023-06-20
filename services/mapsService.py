@@ -39,3 +39,6 @@ class MapsService:
                         weight=2, 
                         #tooltip=matriceDistanceCity[i][j][0]
                     ).add_to(self.map)
+                    
+    def chemin(self, listCoordCity):
+        folium.PolyLine(listCoordCity, tooltip="Coast").add_to(self.map)
