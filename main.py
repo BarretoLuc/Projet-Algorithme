@@ -55,7 +55,7 @@ if __name__ == "__main__":
     for i in range(len(selectedCity)):
         selectedCoordCity.append(listCoordCity[selectedCity[i]])
     
-    print("Sélection des villes à désservir :\n")
+    print("Sélection des villes à désservir :")
     for city in selectedCoordCity:
         print(city.Name, city.X, city.Y)
     
@@ -109,21 +109,21 @@ if __name__ == "__main__":
     sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99)
     scores, best_scores, temps, best_df = sa.run()
     
-    print("Itinéraire le plus optimisé :")
+    print("\nItinéraire le plus optimisé recuit simulé :")
     print(best_df)
     
     mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
-    listSelectedCoordCityOpti = []
+    listSelectedCoordCityOptiRecuit = []
     for i in range(len(best_df)):
-        listSelectedCoordCityOpti.append([best_df.iloc[i]['x'], best_df.iloc[i]['y']])
-    mapService.chemin(listSelectedCoordCityOpti)
+        listSelectedCoordCityOptiRecuit.append([best_df.iloc[i]['x'], best_df.iloc[i]['y']])
+    mapService.chemin(listSelectedCoordCityOptiRecuit)
     mapService.saveMap(".\\maps\\france_cities_chemin_recuit.html")
     
     ###################################################################################################
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (FOURMIS) :       ###
     ###################################################################################################
-    fourmisService = FourmisService(allCity=selectedCoordCity, matrice=matriceDijkstraSelectedCity)
-    fourmisService.main()
+    fourmisService = FourmisService(allCity=selectedCoordCity, matriceInput=matriceDijkstraSelectedCity, nbCity=len(selectedCity))
+    listSelectedCoordCityOptiFourmis = fourmisService.main()
     
     ###################################################################################################
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (2-OPT) :         ###
@@ -131,18 +131,37 @@ if __name__ == "__main__":
     twoOptService = TwoOPT(selectedCoordCity)
     solution, distance = twoOptService.run()
     
-    
-    print("\nItinéraire le plus optimisé :")
+    print("\nItinéraire le plus optimisé 2-OPT :")
     for i in range(len(solution)):
         print(selectedCoordCity[solution[i]].Name, selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y)
     print(selectedCoordCity[solution[0]].Name, selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y)
     
     mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
-    listSelectedCoordCityOpti = []
+    listSelectedCoordCityOpti2OPT = []
     for i in range(len(solution)):
-        listSelectedCoordCityOpti.append([selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y])
-    listSelectedCoordCityOpti.append([selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y])
-    mapService.chemin(listSelectedCoordCityOpti)
+        listSelectedCoordCityOpti2OPT.append([selectedCoordCity[solution[i]].X, selectedCoordCity[solution[i]].Y])
+    listSelectedCoordCityOpti2OPT.append([selectedCoordCity[solution[0]].X, selectedCoordCity[solution[0]].Y])
+    mapService.chemin(listSelectedCoordCityOpti2OPT)
     mapService.saveMap(".\\maps\\france_cities_chemin_twoOpt.html")
+    
+    ###################################################################################################
+    ### Affichage de la carte de l'itinairaire final :                                              ###
+    ###################################################################################################
+    mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
+    listCoordCityFinal = []
+    
+    print("\n")
+    print(matriceDijkstraSelectedCity)
+    print("\n")
+    
+    # for i in range(len(listSelectedCoordCityOptiFourmis)):
+    #     listCoordCityFinal.append(matriceDijkstraSelectedCity[listSelectedCoordCityOptiFourmis[i]])
+    
+    print(listCoordCityFinal)
+    
+    # mapService.chemin(listCoordCityFinal)
+    # mapService.saveMap(".\\maps\\france_cities_chemin_final.html")
+    
+    print("\nFin du programme !")
     
 sys.exit(0)
