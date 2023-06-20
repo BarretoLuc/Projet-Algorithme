@@ -24,6 +24,7 @@ class CityService:
             x, y = self.getCoordinates(city[0])
             self.cities.append(CityModel(city[0], float(x), float(y)))
 
+            # print("Ville", city[0], "traitée.")
             # Indiquer à la queue que le traitement de l'élément est terminé
             self.queueCity.task_done()
         
@@ -34,7 +35,7 @@ class CityService:
                 thread = threading.Thread(target=self.fonctionThread)
                 thread.start()
                 # print("Thread", i, "démarré.")
-            # print("Tous les threads ont été démarrés.\n")
+            # print("\nTous les threads ont été démarrés.\n")
             
             # Ajout des données dans la queue
             for line in file:

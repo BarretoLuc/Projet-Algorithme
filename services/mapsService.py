@@ -20,23 +20,25 @@ class MapsService:
     
     def matriceGraph(self, listCoordCity, matriceDistanceCity):
         for i in range(len(matriceDistanceCity)):
-            for j in range(len(matriceDistanceCity[i])):
+            for j in range(i, len(matriceDistanceCity[i])):
                 if matriceDistanceCity[i][j] != 0:
-                    # Récupération des coordonnées des villes
-                    city1 = listCoordCity[i]
-                    city2 = listCoordCity[j]
-                    
-                    # Traçage du segment entre les villes
-                    folium.PolyLine(
-                        locations=[(city1.X, city1.Y), (city2.X, city2.Y)],
+                    folium.PolyLine( # Traçage du segment entre les villes
+                        locations=[(listCoordCity[i].X, listCoordCity[i].Y), (listCoordCity[j].X, listCoordCity[j].Y)], #[i][j]???
                         color="blue",
                         weight=2
+                        #tooltip=matriceDistanceCity[i][j][0]
                     ).add_to(self.map)
                     
     def completeGraphe(self, listCoordCity, matriceDistanceCity):
-        for i in range(len(listCoordCity)):
-            for j in range(i+1, len(listCoordCity)):
-                folium.PolyLine([[listCoordCity[i].X, listCoordCity[i].Y], [listCoordCity[j].X, listCoordCity[j].Y]], tooltip="Coast", popup=matriceDistanceCity[i][j][0]).add_to(self.map)
-
+        for i in range(len(matriceDistanceCity)):
+            for j in range(i, len(matriceDistanceCity[i])):
+                if matriceDistanceCity[i][j] != 0:
+                    folium.PolyLine( # Traçage du segment entre les villes
+                        locations=[[listCoordCity[i].X, listCoordCity[i].Y], [listCoordCity[j].X, listCoordCity[j].Y]], #[i][j]???
+                        color="blue", 
+                        weight=2, 
+                        #tooltip=matriceDistanceCity[i][j][0]
+                    ).add_to(self.map)
+                    
     def chemin(self, listCoordCity):
         folium.PolyLine(listCoordCity, tooltip="Coast").add_to(self.map)

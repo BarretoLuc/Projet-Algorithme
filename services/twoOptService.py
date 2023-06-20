@@ -41,7 +41,9 @@ city_list=np.array([[1,    2],
                    [-2,   -3],
                    [3,   -3],
                    [-1,   -1],
-                   [1,   0]])                   
+                   [1,   0]])    
+
+               
   
 solution = np.arange(city_list.shape[0]) 
 city_locations = np.concatenate((np.array([city_list[solution[i]] for i in range(len(solution))]),np.array([city_list[solution[0]]])),axis=0)
