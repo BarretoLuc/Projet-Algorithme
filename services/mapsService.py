@@ -41,4 +41,9 @@ class MapsService:
                     ).add_to(self.map)
                     
     def chemin(self, listCoordCity):
-        folium.PolyLine(listCoordCity, tooltip="Coast").add_to(self.map)
+        folium.PolyLine( # Traçage du segment entre les villes
+            listCoordCity, 
+            color="blue",
+            weight=2,
+            #tooltip="Coast"
+        ).add_to(self.map)
