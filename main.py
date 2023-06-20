@@ -69,7 +69,7 @@ if __name__ == "__main__":
     for i in range(len(selectedCity)):
         for j in range(i, len(selectedCity)):
             matriceDijkstraSelectedCity[i][j] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
-            matriceDijkstraSelectedCity[j][i] = dijkstraService.findAll(matriceDistanceCity, selectedCity[i], selectedCity[j])#[0]
+            matriceDijkstraSelectedCity[j][i] = dijkstraService.findAll(matriceDistanceCity, selectedCity[j], selectedCity[i])#[0]
     
     # print("\nDijkstra :")
     # print(matriceDijkstraSelectedCity)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (FOURMIS) :       ###
     ###################################################################################################
     fourmisService = FourmisService(allCity=selectedCoordCity, matriceInput=matriceDijkstraSelectedCity, nbCity=len(selectedCity))
-    listSelectedCoordCityOptiFourmis = fourmisService.main()
+    meilleurCheminFourmis = fourmisService.main()
     
     ###################################################################################################
     ### Calcul du chemin le plus optimisé pour désservir les villes sélectionnées (2-OPT) :         ###
@@ -145,22 +145,73 @@ if __name__ == "__main__":
     mapService.saveMap(".\\maps\\france_cities_chemin_twoOpt.html")
     
     ###################################################################################################
-    ### Affichage de la carte de l'itinairaire final :                                              ###
+    ### Affichage des cartes de l'itinairaire final :                                              ###
     ###################################################################################################
-    mapService = MapsService(selectedCoordCity) # Affichage de itinéraire optimisé
-    listCoordCityFinal = []
+    #recuit simulé :
+    meilleurCheminRecuit = []
+    for i in range(len(best_df)):
+        meilleurCheminRecuit.append(best_df.iloc[i]["index"])
     
-    print("\n")
-    print(matriceDijkstraSelectedCity)
-    print("\n")
+    finalCityRecuit = []
+    for i in range(len(meilleurCheminRecuit)-1):
+        finalCityRecuit.append(matriceDijkstraSelectedCity[meilleurCheminRecuit[i]][meilleurCheminRecuit[i+1]][1])
     
-    # for i in range(len(listSelectedCoordCityOptiFourmis)):
-    #     listCoordCityFinal.append(matriceDijkstraSelectedCity[listSelectedCoordCityOptiFourmis[i]])
+    for i in range(len(finalCityRecuit)-1):
+        finalCityRecuit[i].pop(-1)
     
-    print(listCoordCityFinal)
+    finalCityRecuitRefactor = []
+    for sousListeRecuit in finalCityRecuit:
+        finalCityRecuitRefactor.extend(sousListeRecuit)
     
-    # mapService.chemin(listCoordCityFinal)
-    # mapService.saveMap(".\\maps\\france_cities_chemin_final.html")
+    listCityRecuitFinal=[]
+    for i in range(len(finalCityRecuitRefactor)):
+        listCityRecuitFinal.append(listCoordCity[finalCityRecuitRefactor[i]])
+    
+    listCoordCityRecuitFinal = []
+    for i in range(len(listCityRecuitFinal)):
+        listCoordCityRecuitFinal.append([listCityRecuitFinal[i].X, listCityRecuitFinal[i].Y])
+        
+    mapService = MapsService(listCityRecuitFinal) # Affichage de itinéraire optimisé
+    mapService.chemin(listCoordCityRecuitFinal)
+    mapService.saveMap(".\\maps\\france_cities_chemin_recuit_final.html")
+    
+    distanceTotaleRecuit = 0
+    for i in range(len(finalCityRecuitRefactor)-1):
+        distanceTotaleRecuit += matriceDistanceCity[finalCityRecuitRefactor[i]][finalCityRecuitRefactor[i+1]]
+    
+    print("\nDistance totale recuit simulé : " + str(distanceTotaleRecuit))
+    
+    #fourmis :
+    finalCityFourmis = []
+    for i in range(len(meilleurCheminFourmis)-1):
+        finalCityFourmis.append(matriceDijkstraSelectedCity[meilleurCheminFourmis[i]][meilleurCheminFourmis[i+1]][1])
+        
+    for i in range(len(finalCityFourmis)-1):
+        finalCityFourmis[i].pop(-1)
+    
+    finalCityFourmisRefactor = []
+    for sousListeFourmis in finalCityFourmis:
+        finalCityFourmisRefactor.extend(sousListeFourmis)
+    
+    listCityFourmisFinal=[]
+    for i in range(len(finalCityFourmisRefactor)):
+        listCityFourmisFinal.append(listCoordCity[finalCityFourmisRefactor[i]])
+    
+    listCoordCityFourmisFinal = []
+    for i in range(len(listCityFourmisFinal)):
+        listCoordCityFourmisFinal.append([listCityFourmisFinal[i].X, listCityFourmisFinal[i].Y])
+        
+    mapService = MapsService(listCityFourmisFinal) # Affichage de itinéraire optimisé
+    mapService.chemin(listCoordCityFourmisFinal)
+    mapService.saveMap(".\\maps\\france_cities_chemin_fourmis_final.html")
+    
+    distanceTotaleFourmis = 0
+    for i in range(len(finalCityFourmisRefactor)-1):
+        distanceTotaleFourmis += matriceDistanceCity[finalCityFourmisRefactor[i]][finalCityFourmisRefactor[i+1]]
+    
+    print("\nDistance totale fourmis : " + str(distanceTotaleFourmis))
+    
+    #2-OPT :
     
     print("\nFin du programme !")
     

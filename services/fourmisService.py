@@ -86,7 +86,7 @@ class FourmisService:
         return meilleur_chemin, meilleur_cout
 
     def main(self):
-        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=1000, ville_depart=0)
+        meilleur_chemin, meilleur_cout = self.algo_fourmis(nombre_fourmis=50, alpha=1, beta=1, rho=0.5, iterations=50, ville_depart=0)
         coo_fourmis = []
         y = 0
         
@@ -103,4 +103,4 @@ class FourmisService:
         mapService = MapsService(self.allCity)
         mapService.chemin(coo_fourmis)
         mapService.saveMap(".\\maps\\france_cities_chemin_fourmis.html")
-        return coo_fourmis
+        return meilleur_chemin
