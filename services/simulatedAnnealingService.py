@@ -6,6 +6,7 @@ import numpy as np
 import random
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
+from geopy.distance import geodesic
 
 # # Generate random coordinates
 # x = list(np.random.randint(0, 15, 20))
@@ -39,24 +40,38 @@ import matplotlib.pyplot as plt
 
 
 class SimulatedAnnealing:
-    def __init__(self, iterations, temp, df, gamma):
+    def __init__(self, iterations, temp, df, gamma, contrainte):
         self.iterations = iterations
         self.temp = temp
         self.df = df
         self.gamma = gamma
+        self.contrainte = contrainte
 
     @staticmethod
-    def total_distance(df):
+    def total_distance(df, contrainte):
 
         def euclidean_distance(x1, x2, y1, y2):
             return np.sqrt((x1-x2)**2+(y1-y2)**2)
-
+        
         distance = 0
         for idx in range(0, len(df)):
             if idx + 1 >= len(df):
                 break
-            distance += euclidean_distance(df['x'].loc[idx], df['x'].loc[idx+1],
-                                           df['y'].loc[idx], df['y'].loc[idx+1])
+            
+            if(contrainte == 0):
+                distance += euclidean_distance(df['x'].loc[idx], df['x'].loc[idx+1], df['y'].loc[idx], df['y'].loc[idx+1]) # Trafic normal
+                                                
+            elif(contrainte == 1):
+                distance += euclidean_distance(df['x'].loc[idx], df['x'].loc[idx+1], df['y'].loc[idx], df['y'].loc[idx+1]) # Trafic moyen chargé
+                distance *= random.uniform(1, 1.5)
+                    
+            elif(contrainte == 2):
+                distance += euclidean_distance(df['x'].loc[idx], df['x'].loc[idx+1], df['y'].loc[idx], df['y'].loc[idx+1]) # Trafic chargé
+                distance *= random.uniform(1, 2)
+                    
+            else:
+                distance += euclidean_distance(df['x'].loc[idx], df['x'].loc[idx+1], df['y'].loc[idx], df['y'].loc[idx+1]) # Trafic normal
+                
         return distance
 
     @staticmethod
@@ -97,8 +112,8 @@ class SimulatedAnnealing:
         best_scores = []
         temps = []
 
-        current = self.total_distance(self.df)
-        best = self.total_distance(self.df)
+        current = self.total_distance(self.df, self.contrainte)
+        best = self.total_distance(self.df, self.contrainte)
 
         for _ in range(self.iterations):
 
@@ -106,7 +121,7 @@ class SimulatedAnnealing:
             df_new = self.swap_elements(df)
 
             # calculate new distance
-            new = self.total_distance(df_new)
+            new = self.total_distance(df_new, self.contrainte)
             scores.append(new)
 
             # log if this new one is the best we seen

@@ -23,16 +23,31 @@ if __name__ == "__main__":
     # Calcul de la matrice des distances entre les villes :
     matriceDistanceCity = [[0] * len(listCoordCity) for _ in range(len(listCoordCity))] # Initialisez une matrice de distances remplie de zéros.
 
-    for i in range(len(listCoordCity)): # Calcul des distances entre les villes et ajout dans la matrice.
-        for j in range(i, len(listCoordCity)):    
+    # Initialisation de la liste des voisins
+    neighbors = [0] * len(listCoordCity)
+    max_neighbors = 5
+    
+    for i in range(len(listCoordCity)):
+        for j in range(i, len(listCoordCity)):
             coord1 = (listCoordCity[i].X, listCoordCity[i].Y)
             coord2 = (listCoordCity[j].X, listCoordCity[j].Y)
             distance = geodesic(coord1, coord2).kilometers
-            if(distance < 200 and random.randint(0, 1) == 0): # On supprime certaines distances pour avoir un graphe non connexe
-                # Prendre 3 - 4 villes et les relier entre elles
-                matriceDistanceCity[i][j] = distance
-                matriceDistanceCity[j][i] = distance
-            distance = 0
+
+            # Vérification du nombre de voisins de coord1 et coord2
+            if neighbors[i] < max_neighbors and neighbors[j] < max_neighbors:
+                if distance < 400 and random.randint(0, 1) == 0:
+                    matriceDistanceCity[i][j] = distance
+                    matriceDistanceCity[j][i] = distance
+
+                    # Incrémentation du nombre de voisins
+                    neighbors[i] += 1
+                    neighbors[j] += 1
+                else:
+                    distance = 0
+                    distance = 0
+            else:
+                distance = 0
+                distance = 0
 
     #print("Matrice de distances :\n")
     #for row in matriceDistanceCity:
@@ -106,8 +121,23 @@ if __name__ == "__main__":
     df = pandas.DataFrame(list(zip(x, y, letters)), columns=['x', 'y', 'point']) # Make last city the origin city
     df = df._append(df.iloc[0]).reset_index()
     
-    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99)
-    scores, best_scores, temps, best_df = sa.run()
+    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99, contrainte=0) # Trafic normal = 0 | Trafic moyen chargé = 1 | Trafic chargé = 2.
+    scores, best_scores, temps, best_df = sa.run() ##pas sur d'utiliser matriceDistanceCityFourmis matriceDistanceCityFourmis 24.90
+    print("\nContraintes :")
+    print("\nDistance euclidienne sur trafic normal : " + str(best_scores[-1]))
+    
+    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99, contrainte=1) # Trafic normal = 0 | Trafic moyen chargé = 1 | Trafic chargé = 2.
+    scores, best_scores, temps, best_df = sa.run() ##pas sur d'utiliser matriceDistanceCityFourmis matriceDistanceCityFourmis 27.66
+    print("\nDistance euclidienne sur trafic moyennement chargé : " + str(best_scores[-1]))
+    
+    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99, contrainte=2) # Trafic normal = 0 | Trafic moyen chargé = 1 | Trafic chargé = 2.
+    scores, best_scores, temps, best_df = sa.run() ##pas sur d'utiliser matriceDistanceCityFourmis matriceDistanceCityFourmis 21.80
+    print("\nDistance euclidienne sur trafic chargé : " + str(best_scores[-1]))
+    
+    sa = SimulatedAnnealing(iterations=1000, temp=1000, df=df, gamma=0.99, contrainte=3) # Trafic normal = 0 | Trafic moyen chargé = 1 | Trafic chargé = 2.
+    scores, best_scores, temps, best_df = sa.run() ##pas sur d'utiliser matriceDistanceCityFourmis matriceDistanceCityFourmis 18.98
+    print("\nDistance euclidienne sur trafic normal : " + str(best_scores[-1]))
+    
     
     print("\nItinéraire le plus optimisé recuit simulé :")
     print(best_df)
@@ -211,10 +241,6 @@ if __name__ == "__main__":
     print("\nDistance totale fourmis : " + str(distanceTotaleFourmis))
     
     #2-OPT :
-    # meilleurCheminTwoOPT = []
-    # for i in range(len(solution)):
-    #     meilleurCheminTwoOPT.append(solution[i])
-    
     finalCityTwoOPT = []
     for i in range(len(solution)-1):
         finalCityTwoOPT.append(matriceDijkstraSelectedCity[solution[i]][solution[i+1]][1])
@@ -247,3 +273,15 @@ if __name__ == "__main__":
     print("\nFin du programme !")
     
 sys.exit(0)
+
+
+#Contraintes :
+# Le temps de parcours d’une arête qui peut varier au cours du temps (ce qui revient à faire varier sa longueur), pour représenter la variation du trafic on utilise trois statuts :
+#       Trafic fluide.
+#       Trafic normal.
+#       Trafic chargé.
+# Fenêtre de temps de livraison pour chaque objet :
+#       Interdiction de livrer hors de la fenêtre.
+#       Possibilité d'attendre sur place l'ouverture de la fenêtre temporelle.
+
+#Prérécupérer les coordonnées des villes et matrice distance. 
